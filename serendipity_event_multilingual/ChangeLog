@@ -1,3 +1,19 @@
+2.36: 
+
+    * Rework of the language determination function, most of it now covered in
+      the serendipity framework, details in leading comments and comments in
+      /include/functions_config.inc.php: serendipity_getSessionLanguage() and
+      serendipity_getPostAuthSessionLanguage(), added $serendipity['default_lang']
+      for the blogs default language
+    * activated and integrated the option to hide untranslated articles
+    * changed the footer link to the format id-title for all languages,
+      including default
+    * The backend display language is now the user language, the dropdown
+      entry for 'default' is fixed to the blog default language (has to be).
+    * sidebar plugin: changed the POST value to [serendipity][user_language]
+      to get it into $serendipity['POST']
+    * added event_hook 'multilingual_strip_langs' to strip tagged translation from strings
+      i. e. category use outside the sidebar
 2.35: assign lang stripped blogTitle in genpage hook (empty search was not covered)
 2.34: Added legal gdpr/dsgvo info
 2.33: Iconfont a11y fix (yellowled)

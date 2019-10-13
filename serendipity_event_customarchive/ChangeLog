@@ -4,6 +4,23 @@
   it can be used in entries.tpl
 * Latest: Smarty3 forward compatibility
 
+1.13: 
+    * The standard link to the archive /pages/archives.html causes the default 
+      builtin archive to be displayed beneath the customarchive. This is
+      caused by the matching in index.php with the 'archives' keyword.
+      To disable that, change it to something else. It also does work with
+      a relative link and without the .html like /sortarchiv
+    * added a sidebar plugin instead of the html nugget. The plugin also 
+      uses the relative path and shows an option to display a link to
+      the builtin archive if it is not displayed underneath.
+    * made the plugin multilingual: added a field for language-based-search,
+      check for the settings of multilingual plugin (if installed), displays only
+      the entries in the selected language if that option is set and strips the
+      tagged translations from the categories
+    * displays now a message if the result was empty
+    * reformated the search mask
+
+
 1.11:
 -----
 Added new smarty function to allow building for archive overviews based
