@@ -777,12 +777,25 @@ class serendipity_event_multilingual extends serendipity_event
                     break;
 
                 case 'multilingual_strip_langs':
+                    // $eventData: may contain a single variable, one- or twodimensional array
+                    // in case of array: only apply function if key is inside $addData
+                    
                     if (serendipity_db_bool($this->get_config('tagged_sidebar', 'true'))) {
                         if (is_array($eventData)) {
+                            if (!is_array($addData)) $addData = array($addData);
                             foreach ($eventData as $key => $value) {
-                                $eventData[$key] = $this->strip_langs($value);
+                                // one-dimensional array
+                                if (!is_array($value)) {
+                                    if (in_array($key, $addData)) $eventData[$key] = $this->strip_langs($value);
+                                } else {
+                                // two-dimensional
+                                    foreach ($value as $subkey => $subvalue) {
+                                        if (in_array($subkey,$addData)) $eventData[$key][$subkey] = $this->strip_langs($subvalue);
+                                    }
+                                }
                             }
                         } else { 
+                            // single string to strip
                             $eventData = $this->strip_langs($eventData);
                         }
                     }
