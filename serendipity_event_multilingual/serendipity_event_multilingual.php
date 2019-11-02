@@ -45,7 +45,7 @@ class serendipity_event_multilingual extends serendipity_event
         $propbag->add('stackable',      false);
         $propbag->add('author',         'Garvin Hicking, Wesley Hwang-Chung, Ian, Stephan Brunker');
         $propbag->add('requirements',   array(
-            'serendipity' => '1.6',
+            'serendipity' => '2.4',
             'smarty'      => '2.6.7',
             'php'         => '4.1.0'
         ));
@@ -109,7 +109,7 @@ class serendipity_event_multilingual extends serendipity_event
         if (!defined('IN_serendipity_admin')) {
 
             // rewrite lang_selected = 'default' to default language
-            if ($serendipity['GET']['lang_selected'] == 'default') $serendipity['GET']['lang_selected'] == $serendipity['default_lang'];
+            if ($serendipity['GET']['lang_selected'] == 'default') $serendipity['GET']['lang_selected'] = $serendipity['default_lang'];
             
             // set $this->showlang to selected language if full language switch is not enforced
             if (!$this->langswitch && !empty($serendipity['languages'][$serendipity['GET']['lang_selected']])) {
