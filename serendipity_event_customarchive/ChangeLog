@@ -1,9 +1,3 @@
-1.12:
------
-* Propagate $smarty.env.staticpage_pagetitle (and the others) so that
-  it can be used in entries.tpl
-* Latest: Smarty3 forward compatibility
-
 1.13: 
     * The standard link to the archive /pages/archives.html causes the default 
       builtin archive to be displayed beneath the customarchive. This is
@@ -20,6 +14,11 @@
     * displays now a message if the result was empty
     * reformated the search mask
 
+1.12:
+-----
+* Propagate $smarty.env.staticpage_pagetitle (and the others) so that
+  it can be used in entries.tpl
+* Latest: Smarty3 forward compatibility
 
 1.11:
 -----
