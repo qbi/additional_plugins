@@ -45,7 +45,7 @@ class serendipity_event_multilingual extends serendipity_event
         $propbag->add('stackable',      false);
         $propbag->add('author',         'Garvin Hicking, Wesley Hwang-Chung, Ian, Stephan Brunker');
         $propbag->add('requirements',   array(
-            'serendipity' => '2.4',
+            'serendipity' => '1.6',
             'smarty'      => '2.6.7',
             'php'         => '4.1.0'
         ));
@@ -104,6 +104,14 @@ class serendipity_event_multilingual extends serendipity_event
         // $this->lang_display is the variable that FORCES translations of entries. If a translation does not exist,
         //                     an entry is NOT SHOWN.
         // $this->showlang     is the variable that indicates which language of an entry to prefer
+
+        // check blog default language from db for serendipity core versions < 2.4
+        if (empty($serendipity['default_lang'])) {
+            $rows = serendipity_db_query("SELECT name, value
+                                        FROM {$serendipity['dbPrefix']}config
+                                        WHERE authorid = 0 AND name = 'lang'",true,'assoc');
+            $serendipity['default_lang'] = $rows['value'];
+        }
 
         // frontend only
         if (!defined('IN_serendipity_admin')) {

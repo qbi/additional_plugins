@@ -4,8 +4,9 @@
       the serendipity framework, details in leading comments and comments in
       /include/functions_config.inc.php: serendipity_getSessionLanguage() and
       serendipity_getPostAuthSessionLanguage(), added $serendipity['default_lang']
-      for the blogs default language, needs now Serendipity version 2.4 to work
-      because of these changes in the core
+      for the blogs default language, needs now Serendipity version 2.4 to fix
+      all issues because of accompanying changes in the core. Added db_query to
+      get default_lang in case of an older core version.
     * activated and integrated the option to hide untranslated articles
     * changed the footer link to the format id-title for all languages,
       including default
