@@ -16,6 +16,12 @@
       to get it into $serendipity['POST']
     * added event_hook 'multilingual_strip_langs' to strip tagged translation from strings
       i. e. category use outside the sidebar
+    * fetchentries event hook: added $addData['showAllLangs'] to show untranslated articles 
+      in special situations (e.g. customarchive plugin), the plugin has to be below the calling
+      plugin in the plugin list
+    * fetchentries event hook: removed duplicated population of multilingual_ data 
+      by SQL join
+      (translations are already in entries-properties subarray)
 2.35: assign lang stripped blogTitle in genpage hook (empty search was not covered)
 2.34: Added legal gdpr/dsgvo info
 2.33: Iconfont a11y fix (yellowled)

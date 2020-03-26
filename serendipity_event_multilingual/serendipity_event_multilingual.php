@@ -711,26 +711,21 @@ class serendipity_event_multilingual extends serendipity_event
                     if (empty($this->showlang)) {
                         return;
                     }
-                    if (empty($eventData['addkey'])) $eventData['addkey'] = '' ;
                     if (empty($eventData['joins']))  $eventData['joins'] = '' ;
                     if (empty($eventData['and'])) $eventData['and'] = '' ;
                     
-                    $cond  = "multilingual_body.value AS multilingual_body,\n";
-                    $cond .= "multilingual_extended.value AS multilingual_extended,\n";
-                    $cond .= "multilingual_title.value AS multilingual_title,\n";
-                        $eventData['addkey'] .= $cond;
+                    // multilingual data is already fetched by entryproperties plugin or eventhook
+                    // only make a join to check the multilingual_body property if untranslated entries should be hidden
+                    // If lang_display is set - we want ONLY the entries which have translation
+                    // if lang_display is default language then don't add the restriction because there is no multilingual body value for default
+
+                    if (!empty($this->lang_display) && $this->lang_display != $serendipity['default_lang'] 
+                            && (!isset($addData['showAllLangs']) || $addData['showAllLangs'] !== true)) {
 
                     $cond  = "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_body
                                                  ON (e.id = multilingual_body.entryid AND multilingual_body.property = 'multilingual_body_" . $this->showlang . "')";
-                    $cond .= "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_extended
-                                                 ON (e.id = multilingual_extended.entryid AND multilingual_extended.property = 'multilingual_extended_" . $this->showlang . "')";
-                    $cond .= "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_title
-                                                 ON (e.id = multilingual_title.entryid AND multilingual_title.property = 'multilingual_title_" . $this->showlang . "')";
                     $eventData['joins'] .= $cond;
 
-                    if (!empty($this->lang_display) && $this->lang_display != $serendipity['default_lang']) {
-                        // If lang_display is set - we want ONLY the entries which have translation
-                        // if lang_display is default language then don't add the restriction because there is no multilingual body value for default
                         $eventData['and'] .= " AND multilingual_body.value IS NOT NULL";
                     }
 

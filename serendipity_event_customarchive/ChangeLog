@@ -8,9 +8,10 @@
       uses the relative path and shows an option to display a link to
       the builtin archive if it is not displayed underneath.
     * made the plugin multilingual: added a field for language-based-search,
-      check for the settings of multilingual plugin (if installed), displays only
-      the entries in the selected language if that option is set and strips the
-      tagged translations from the categories
+      check for the settings of multilingual plugin (if installed), strips the
+      tagged translations from the categories, if the plugin is above the 
+      multilingual plugin in the plugin list, show all entries even if
+      the option is set to hide untranslated articles in the regular blog
     * displays now a message if the result was empty
     * reformated the search mask
 
