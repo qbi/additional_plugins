@@ -687,7 +687,6 @@ class serendipity_event_customarchive extends serendipity_event {
             switch($event) {
                 case 'genpage':
                     $args = implode('/', serendipity_getUriArguments($eventData, true));
-                    serendipity_rewriteURL($args, 'baseURL');
 
                     if ($this->selected()) {
                         $serendipity['head_title']    = $this->get_config('pagetitle');
@@ -695,7 +694,7 @@ class serendipity_event_customarchive extends serendipity_event {
                     }
 
                     if (empty($serendipity['GET']['subpage'])) {
-                        $serendipity['GET']['subpage'] = $nice_url;
+                        $serendipity['GET']['subpage'] = serendipity_rewriteURL($args, 'baseURL');
                     }
 
                     if (!is_object($serendipity['smarty'])) {
