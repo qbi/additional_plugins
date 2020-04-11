@@ -711,39 +711,65 @@ class serendipity_event_multilingual extends serendipity_event
                     if (empty($this->showlang)) {
                         return;
                     }
-                    if (empty($eventData['joins']))  $eventData['joins'] = '' ;
-                    if (empty($eventData['and'])) $eventData['and'] = '' ;
                     
-                    // multilingual data is already fetched by entryproperties plugin or eventhook
+                    // multilingual data for display is already fetched by entryproperties plugin or eventhook 
+                    // in serendipity_fetchentry() function or serendipity_fetchEntryData() function. 
                     // only make a join to check the multilingual_body property if untranslated entries should be hidden
                     // If lang_display is set - we want ONLY the entries which have translation
                     // if lang_display is default language then don't add the restriction because there is no multilingual body value for default
 
                     if (!empty($this->lang_display) && $this->lang_display != $serendipity['default_lang'] 
                             && (!isset($addData['showAllLangs']) || $addData['showAllLangs'] !== true)) {
+                        if (empty($eventData['joins']))  $eventData['joins'] = '' ;
 
-                    $cond  = "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_body
+                        $joins  = "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_body
                                                  ON (e.id = multilingual_body.entryid AND multilingual_body.property = 'multilingual_body_" . $this->showlang . "')";
-                    $eventData['joins'] .= $cond;
+                        $eventData['joins'] .= $joins;
+                        unset($joins);
 
+                        if (empty($eventData['and'])) $eventData['and'] = '' ;
                         $eventData['and'] .= " AND multilingual_body.value IS NOT NULL";
                     }
+                    // for the search, we need the full multilingual join inside the query to create the index
+                    // if we are in translated mode
+                    if ($addData['source'] == 'search' && isset($eventData['find_part'])
+                        && $this->showlang != $serendipity['default_lang']) {
 
-                    if ($addData['source'] == 'search' && isset($eventData['find_part'])) {
+                        if (empty($eventData['addkey'])) $eventData['addkey'] = '' ;                        
+                        $addkey = "multilingual_body.value AS multilingual_body,\n";
+                        $addkey .= "multilingual_extended.value AS multilingual_extended,\n";
+                        $addkey .= "multilingual_title.value AS multilingual_title,\n";
+                        $eventData['addkey'] .= $addkey;
+
+                        if (empty($eventData['joins']))  $eventData['joins'] = '' ;
+                        if (!strpos($eventData['joins'], 'multilingual_body')) {
+                            $joins  = "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_body
+                                            ON (e.id = multilingual_body.entryid AND multilingual_body.property = 'multilingual_body_" . $this->showlang . "')";
+                        }
+                        $joins .= "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_extended
+                                        ON (e.id = multilingual_extended.entryid AND multilingual_extended.property = 'multilingual_extended_" . $this->showlang . "')";
+                        $joins .= "\nLEFT OUTER JOIN {$serendipity['dbPrefix']}entryproperties multilingual_title 
+                                        ON (e.id = multilingual_title.entryid AND multilingual_title.property = 'multilingual_title_" . $this->showlang . "')";
+                        $eventData['joins'] .= $joins;
+
                         $term =& $addData['term'];
                         $cond =& $eventData;
+                        
+                        // in translated mode, search only in the translations, not in the default entries
+                        $eventData['find_part'] = '';
+                        
                         if (stristr($serendipity['dbType'], 'postgres')) {
-                            $cond['find_part'] .= " OR (multilingual_body.value ILIKE '%$term%' OR multilingual_extended.value ILIKE '%$term%' OR multilingual_title.value ILIKE '%$term%')";
+                            $cond['find_part'] .= "(multilingual_body.value ILIKE '%$term%' OR multilingual_extended.value ILIKE '%$term%' OR multilingual_title.value ILIKE '%$term%')";
                         } elseif (stristr($serendipity['dbType'], 'sqlite')) {
                             $term = serendipity_mb('strtolower', $term);
-                            $cond['find_part'] .= " OR (lower(multilingual_body.value) LIKE '%$term%' OR lower(multilingual_extended.value) LIKE '%$term%' OR lower(multilingual_title.value) LIKE '%$term%')";
+                            $cond['find_part'] .= "(lower(multilingual_body.value) LIKE '%$term%' OR lower(multilingual_extended.value) LIKE '%$term%' OR lower(multilingual_title.value) LIKE '%$term%')";
                         } else {
                             if (preg_match('@["\+\-\*~<>\(\)]+@', $term)) {
                                 $bool = ' IN BOOLEAN MODE';
                             } else {
                                 $bool = '';
                             }
-                            $cond['find_part'] .= " OR (
+                            $cond['find_part'] .= "  (
                                                          MATCH(multilingual_body.value)        AGAINST('$term' $bool)
                                                          OR MATCH(multilingual_extended.value) AGAINST('$term' $bool)
                                                          OR MATCH(multilingual_title.value)    AGAINST('$term' $bool)
